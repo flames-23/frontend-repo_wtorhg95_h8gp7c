@@ -33,7 +33,7 @@ function ProductCard({ item }) {
     </div>
   )}
 
-export default function ProductGrid({ type = 'hardware', game = null }) {
+export default function ProductGrid({ type = 'hardware', game = null, reloadAt = 0 }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -57,7 +57,7 @@ export default function ProductGrid({ type = 'hardware', game = null }) {
       }
     }
     load()
-  }, [type, game])
+  }, [type, game, reloadAt])
 
   if (loading) return <div className="text-white/70">Loading {type}...</div>
   if (error) return <div className="text-red-400">{error}</div>
@@ -65,7 +65,7 @@ export default function ProductGrid({ type = 'hardware', game = null }) {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       {items.map((item) => (
-        <ProductCard key={item.id} item={item} />
+        <ProductCard key={item.id || item._id || item.title} item={item} />
       ))}
       {!items.length && (
         <div className="col-span-full text-white/60">No items found.</div>
