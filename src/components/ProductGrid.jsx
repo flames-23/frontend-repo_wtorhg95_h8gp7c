@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { fetchProductsFallback } from '../mockApi'
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || window.location.origin.replace('3000','8000')
 
@@ -48,10 +49,13 @@ export default function ProductGrid({ type = 'hardware', game = null, reloadAt =
         if (type === 'licenses' && game) params.push(`game=${encodeURIComponent(game)}`)
         if (params.length) url += `?${params.join('&')}`
         const res = await fetch(url)
+        if (!res.ok) throw new Error('bad status')
         const data = await res.json()
         setItems(Array.isArray(data) ? data : [])
       } catch (e) {
-        setError('Failed to load products')
+        const data = await fetchProductsFallback({ type, game })
+        setItems(data)
+        setError(null)
       } finally {
         setLoading(false)
       }

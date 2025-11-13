@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import GlitchText from '../components/GlitchText'
 import ProductGrid from '../components/ProductGrid'
 import AdminSeed from '../components/AdminSeed'
+import { fetchLicenseGamesFallback } from '../mockApi'
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || window.location.origin.replace('3000','8000')
 
@@ -14,9 +15,12 @@ export default function Licenses() {
     const load = async () => {
       try {
         const res = await fetch(`${API_BASE}/api/products/licenses/games`)
+        if (!res.ok) throw new Error('bad status')
         const data = await res.json()
         setGames(data)
-      } catch {}
+      } catch {
+        fetchLicenseGamesFallback().then(setGames)
+      }
     }
     load()
   }, [])
